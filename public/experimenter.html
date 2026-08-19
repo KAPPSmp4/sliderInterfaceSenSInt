@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Experimenter</title><link rel="stylesheet" href="experimenter.css">
+    </head>
+    <body>
+        <main>
+            <h1>Experiment Controller</h1>
+            <p>Participant: <input type="number" name="participantId" id="participantId" min="0" max="999"></p>
+            <p id="trial-display">Trial number: 0</p>
+
+            <div class="buttons">
+                <button id="continue">New Participant</button>
+                <button id="continue">Next Trial</button>
+                <button id="reset">Reset</button>
+            </div>
+
+            <h2>Participant Preview</h2>
+            <p>Moved: False</p>
+            <p>Motionless since: s</p>
+            <div class="slider-preview">
+                <div id="participantMarker"></div>
+            </div>
+        </main>
+        
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="experimenter.js"></script>
+    </body>
+</html>
