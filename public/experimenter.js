@@ -1,4 +1,4 @@
-const socket = io("ws://localhost:3000"); 
+const socket = io(); 
 
 const trialDisplay = document.getElementById("trial-display");
 const nextDisplay = document.getElementById("next-display");

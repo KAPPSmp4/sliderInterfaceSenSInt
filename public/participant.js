@@ -1,4 +1,4 @@
-const socket = io("ws://localhost:3000");
+const socket = io();
 
 const slider = document.getElementById('slider');
 const trialDisplay = document.getElementById("trial-display");
