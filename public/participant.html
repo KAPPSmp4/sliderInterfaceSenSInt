@@ -4,16 +4,20 @@
         <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
         <title>Participant</title>
         <link rel="stylesheet" href="participant.css">
+
+        <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+        <script defer src="participant.js"></script>
     </head>
     <body>
         <main>
             <input id="slider" type="range" min="0" max="1000" value="500" step="1" aria-label="Slider">
 
-            <div id="trial-display">Trial number: 0</div>
-        </main>
-        
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="participant.js"></script>
+            <p id="trial-display">Trial number: 0</p>
 
+            <div class="buttons">
+                <button id="request-next">Next</button>
+                <button id="request-reset">Reset</button>
+            </div>
+        </main>
     </body>
 </html>
