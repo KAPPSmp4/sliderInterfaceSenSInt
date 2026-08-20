@@ -1,0 +1,30 @@
+body {
+    font-family:system-ui,sans-serif;
+    margin:0;
+    padding:40px;
+    max-width:900px;
+    margin-inline:auto;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+p {
+    margin: 8px;
+}
+
+.buttons {
+    display:flex;
+    gap:12px;
+    margin-bottom:25px;
+}
+
+button {
+    font-size:18px;
+    padding:12px 22px;
+    cursor:pointer;
+}

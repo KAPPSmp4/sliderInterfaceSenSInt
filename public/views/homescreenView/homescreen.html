@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <link rel="stylesheet" href="homescreen.css">
+        <title>Home</title>
+
+        <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+        <script defer src="homescreen.js"></script>
+    </head>
+    <body>
+        <main>
+            <h1>Home</h1>
+            <h2>You Are</h2>
+            <p>Participant: 
+                <input  id="participantId" type="number" 
+                        name="participantId" id="participantId" 
+                        min="0" max="999">
+            </p>
+
+            <div class="buttons">
+                <button id="new-participant">Start</button>
+            </div>
+        </main>
+    </body>
+</html>

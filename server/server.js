@@ -36,15 +36,37 @@ if (!fs.existsSync(startingCSV)) {
   );
 }
 
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public/views/homescreenView')));
+app.use(express.static(path.join(__dirname, '../public/views/tutorialView')));
+app.use(express.static(path.join(__dirname, '../public/views/sliderView')));
+app.use(express.static(path.join(__dirname, '../public/views/intermissionView')));
+app.use(express.static(path.join(__dirname, '../public/views/finishView')));
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/views/homescreenView/homescreen.html"));
+});
+
+app.get("/tutorial", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/views/tutorialView/tutorial.html"));
+});
+
+app.get("/slider", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/views/sliderView/slider.html"));
+});
+
+app.get("/intermission", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/views/intermissionView/intermission.html"));
+});
+
+app.get("/finish", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/views/finishView/finish.html"));
+});
 
 io.on('connection', socket => {
   console.log("a user connected");
   io.emit('trialChange', trialNumber);
-  io.emit('resetChange', resetFlag);
-  io.emit('nextChange', nextFlag);
 
-  // Experimenter Signals
+  // Homescreen signals
 
   socket.on('newParticipant' , (newParticipant) => {
     currentParticipantId = newParticipant;
@@ -58,19 +80,7 @@ io.on('connection', socket => {
     }
   });
 
-  socket.on('nextTrial' , (nextTrial) => {
-    nextFlag = false;
-    resetFlag = false;
-    trialNumber++;
-    io.emit('nextChange', nextFlag);
-    io.emit('resetChange', resetFlag);
-    io.emit('trialChange', trialNumber);
-  });
-
-  socket.on('reseted' , (reseted) => {
-    resetFlag = false;
-    io.emit('resetChange', resetFlag);
-  });
+  // Inter
 
   // Participant signals
 
@@ -86,17 +96,34 @@ io.on('connection', socket => {
     ];
 
     fs.appendFileSync(currentCSV,row.join(",") + "\n");
-    io.emit('sliderChange', sliderData.position * 100);
   });
 
-  socket.on('requestReset' , (requestReset) => {
-    resetFlag = true;
-    io.emit('resetChange', resetFlag);
+  socket.on('nextTrial' , (nextTrial) => {
+    trialNumber++;
+    io.emit('trialChange', trialNumber);
   });
 
-  socket.on('requestNext' , (requestNext) => {
-    nextFlag = true;
-    io.emit('nextChange', nextFlag);
+  socket.on('redo' , (redo) => {
+    const data = fs.readFileSync(currentCSV, "utf8");
+
+    let lines = data.split(/\r?\n/);
+
+    // Remove empty line at the end
+    if (lines[lines.length - 1] === "") {
+      lines.pop();
+    }
+
+    while (lines.length > 0) {
+      const rowTrialNumber = Number(lines[lines.length - 1].split(",")[0]);
+
+      if (rowTrialNumber === trialNumber) {
+        lines.pop();
+      } else {
+        break;
+      }
+    }
+
+    fs.writeFileSync(currentCSV, lines.join("\n") + "\n");
   });
 });
 
