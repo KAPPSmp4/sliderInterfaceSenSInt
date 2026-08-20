@@ -6,7 +6,8 @@ const resetDisplay = document.getElementById("reset-display");
 const newParticipantButton = document.getElementById("new-participant");
 let newParticipantId = document.getElementById("participantId");
 const resetButton = document.getElementById("reset");
-const nextButton = document.getElementById("next-trial") ;
+const nextButton = document.getElementById("next-trial");
+const sliderPosition = document.getElementById("participantMarker");
 
 socket.on('trialChange' , (trialChange) => {
   trialDisplay.textContent = `Trial number: ${trialChange}`
@@ -18,6 +19,11 @@ socket.on('resetChange' , (resetChange) => {
 
 socket.on('nextChange' , (nextChange) => {
   nextDisplay.textContent = `Next: ${nextChange}`
+});
+
+socket.on('sliderChange' , (sliderChange) => {
+  console.log("receiving slider data")
+  sliderPosition.style.left = `${sliderChange}%`
 });
 
 newParticipantButton.onclick = () => {

@@ -13,9 +13,6 @@ const io = new Server(server, {
   }
 });
 
-let DATA_DIR = path.join(__dirname, 'data');
-fs.mkdirSync(DATA_DIR, { recursive: true });
-
 // Variables
 let currentParticipantId = 0;
 let currentCSV = null;
@@ -28,11 +25,26 @@ let resetFlag = false;
 let movedFlag = false;
 let motionless = 0;
 
+let DATA_DIR = path.join(__dirname, 'data');
+fs.mkdirSync(DATA_DIR, { recursive: true });
+let startingCSV = path.join(DATA_DIR, `Participant${currentParticipantId}.csv`);
+currentCSV = startingCSV;
+if (!fs.existsSync(startingCSV)) {
+  fs.writeFileSync(
+    startingCSV,
+    "trialNumber,timestamp,position,speed,direction\n"
+  );
+}
+
 app.use(express.static(path.join(__dirname, '../public')));
 
 io.on('connection', socket => {
   console.log("a user connected");
   io.emit('trialChange', trialNumber);
+  io.emit('resetChange', resetFlag);
+  io.emit('nextChange', nextFlag);
+
+  // Experimenter Signals
 
   socket.on('newParticipant' , (newParticipant) => {
     currentParticipantId = newParticipant;
@@ -43,7 +55,7 @@ io.on('connection', socket => {
           CSV,
           "trialNumber,timestamp,position,speed,direction\n"
       );
-}
+    }
   });
 
   socket.on('nextTrial' , (nextTrial) => {
@@ -55,13 +67,30 @@ io.on('connection', socket => {
     io.emit('trialChange', trialNumber);
   });
 
-  socket.on('requestReset' , (requestReset) => {
-    resetFlag = true;
+  socket.on('reseted' , (reseted) => {
+    resetFlag = false;
     io.emit('resetChange', resetFlag);
   });
 
-  socket.on('reseted' , (reseted) => {
-    resetFlag = false;
+  // Participant signals
+
+  socket.on('sliderData' , (sliderData) => {
+    console.log("Received:", sliderData);
+
+    const row = [
+      trialNumber,
+      sliderData.timestamp,
+      sliderData.position,
+      sliderData.speed,
+      sliderData.direction
+    ];
+
+    fs.appendFileSync(currentCSV,row.join(",") + "\n");
+    io.emit('sliderChange', sliderData.position * 100);
+  });
+
+  socket.on('requestReset' , (requestReset) => {
+    resetFlag = true;
     io.emit('resetChange', resetFlag);
   });
 
