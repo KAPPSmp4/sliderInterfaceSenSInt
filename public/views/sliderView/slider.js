@@ -21,6 +21,8 @@ socket.on('trialChange' , (trialChange) => {
 });
 
 socket.on('enableButton' , (trialChange) => {
+  slider.classList.remove("sliding");
+  slider.disabled = false;
   nextButton.disabled = false;
 });
 
@@ -36,6 +38,7 @@ resetButton.onclick = () => {
 
 nextButton.onclick = () => {
   nextButton.disabled = true;
+  slider.disabled = true;
   if (trialNumber + 1 == 33 || trialNumber + 1 == 65 || trialNumber + 1 == 97) {
       window.location.href='/intermission'
   }
