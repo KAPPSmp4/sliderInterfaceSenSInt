@@ -16,7 +16,7 @@ const io = new Server(server, {
 // Variables
 let currentParticipantId = 0;
 let currentCSV = null;
-let trialNumber = 0;
+let trialNumber = 1;
 
 let sliderPosition = 0;
 let nextFlag = false;
@@ -96,6 +96,10 @@ io.on('connection', socket => {
     ];
 
     fs.appendFileSync(currentCSV,row.join(",") + "\n");
+  });
+
+  socket.on('vibrationStarted' , (vibrationStarted) => {
+    io.emit('enableButton', trialNumber);
   });
 
   socket.on('nextTrial' , (nextTrial) => {

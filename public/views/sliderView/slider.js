@@ -5,18 +5,23 @@ const trialDisplay = document.getElementById("trial-display");
 const resetButton = document.getElementById("redo-btn");
 const nextButton = document.getElementById("nextTrial-btn") ;
 
-let trialNumber = 0;
+let trialNumber = 1;
 let checkpointTime = performance.now();
+let firstPointerDown = false;
 let lastTimestamp = performance.now();
 let lastPosition = Number(slider.value) / 1000;
 
+let logInterval = null;
+
 socket.on('trialChange' , (trialChange) => {
   trialNumber = trialChange;
-  trialDisplay.textContent = `Trial number: ${trialChange}`
+  firstPointerDown = false;
+  slider.classList.remove("sliding");
+  trialDisplay.textContent = `Trial number: ${trialNumber}`
 });
 
-socket.on('checkpointReached' , (checkpointReached) => {
-  checkpointTime = performance.now();
+socket.on('enableButton' , (trialChange) => {
+  nextButton.disabled = false;
 });
 
 resetButton.onclick = () => {
@@ -30,6 +35,7 @@ resetButton.onclick = () => {
 };
 
 nextButton.onclick = () => {
+  nextButton.disabled = true;
   if (trialNumber + 1 == 33 || trialNumber + 1 == 65 || trialNumber + 1 == 97) {
       window.location.href='/intermission'
   }
@@ -40,6 +46,22 @@ nextButton.onclick = () => {
 };
 
 slider.addEventListener('input', () => {
+  logSlider();
+});
+
+slider.addEventListener("pointerdown", () => {
+  if (!firstPointerDown) {
+    firstPointerDown = true;
+    checkpointTime = performance.now();
+  }
+  slider.classList.add("sliding");
+});
+
+slider.addEventListener('pointerup', () => {
+  logInterval = null;
+});
+
+function logSlider() {
   const now = performance.now() - checkpointTime;
   const position = Number(slider.value) / 1000;
   const dt = Math.max((now - lastTimestamp) / 1000, 0.001);
@@ -58,12 +80,4 @@ slider.addEventListener('input', () => {
 
   lastPosition = position; 
   lastTimestamp = now;
-});
-
-slider.addEventListener("pointerdown", () => {
-    slider.classList.add("sliding");
-});
-
-slider.addEventListener("pointerup", () => {
-    slider.classList.remove("sliding");
-});
+}
